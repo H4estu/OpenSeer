@@ -153,34 +153,35 @@ def main():
         num_sales = st.number_input('Number of sales', min_value=1, max_value=300)
         submitted = st.form_submit_button('Submit')
         
-        # Call the function that will request the last-n of sales from opensea
-        if submitted:
-            sales_data_json = query_api(num_sales)
+    # Call the function that will request the last-n of sales from opensea
+    if submitted:
+        sales_data_json = query_api(num_sales)
 
-            # Call the function that will transform the JSON data into a tabular dataframe
-            sales_data_frame = parse_data(sales_data_json)
+        # Call the function that will transform the JSON data into a tabular dataframe
+        sales_data_frame = parse_data(sales_data_json)
 
-            # Call the function that will group the data by Collection.
-            counts = group_data(sales_data_frame)
-            
-            # Plot the data. altair.Chart is directly invoked for better
-            # control over plot elements.
-            st.subheader('Response')
-            c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
-                .mark_bar().encode(
-                    x='Collection',
-                    y='Sales'
-                )
+        # Call the function that will group the data by Collection.
+        counts = group_data(sales_data_frame)
+        
+        # Plot the data. altair.Chart is directly invoked for better
+        # control over plot elements.
+        st.subheader('Response')
+        c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
+            .mark_bar().encode(
+                x='Collection',
+                y='Sales'
             )
-            st.altair_chart(c, use_container_width=True)
+        )
+        st.altair_chart(c, use_container_width=True)
 
-            if num_sales < 3:
-                top_selling = num_sales
-            else:
-                top_selling = 3
+        if num_sales < 3:
+            top_selling = num_sales
+        else:
+            top_selling = 3
 
-            st.sidebar.subheader(f'Top {top_selling} Collections')
-            st.sidebar.markdown(counts.iloc[0:top_selling].to_markdown())
+        st.sidebar.subheader(f'Top {top_selling} Collections')
+        st.sidebar.markdown(counts.iloc[0:top_selling].to_markdown())
+    
 
     # Clean up and exit the program!
     return
