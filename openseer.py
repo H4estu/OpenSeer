@@ -116,11 +116,8 @@ def parse_data(sales_data):
     return data_frame
 
 
-def plot_data(sales_data):
-    """Graphically plot the data.
-
-    Create bar plots of the sales data. Each bar represents an NFT 
-    collection, and its height represent the number of sales made.
+def group_data(sales_data):
+    """Group the data by NFT collector.
 
     Parameters
     ----------
@@ -135,32 +132,13 @@ def plot_data(sales_data):
     # Group the sales by NFT collection. Without this, all bars would
     # be of height 1 (i.e. 1 sale), and there would be multiple bars
     # with the same NFT collection name.
-    # counts = sales_data.groupby('NFT_Group_Name').count()
-    counts = sales_data['NFT_Group_Name'].value_counts()
-
-    # Set the font size of the plot text. If the text is too small, you can
-    # increase this number.
-    mpl.rc('font', size=7)
-
-    # Establish the plot axes and the size (width, height, in inches) 
-    # of the plot window.
-    fig, ax = plt.subplots(figsize=(8, 7))
-
-    # Make a bar plot of the data.
-    counts.plot.bar(ax=ax)
-
-    # Move the bottom of the plot upward in the window. Without this, 
-    # the x-axis labels can get cut off at the bottom of the window. If the
-    # NFT collection name is long enough, it still might get cut off. In that
-    # case, just manually resize the window by grabbing and mvoing the corner
-    # of the plot window.
-    plt.subplots_adjust(bottom=0.25)  
-
-    # Increase the x-label font size
-    ax.set_xlabel('NFT Collection', fontsize=10)
-
-    # Display the plot to the user. This is what makes the pop-up window!
-    # plt.show()
+    counts = (sales_data
+        .groupby('NFT_Group_Name')
+        .count()
+        .rename(columns={'transaction_date': 'Sales'})
+        .sort_values(by='Sales', ascending=False)
+    )
+    counts.index.name = 'Collection'
 
     return counts
 
@@ -186,7 +164,7 @@ def main():
             # Call the function that will plot the sales data grouped by the
             # name of the collection. This line is what gives the bars their 
             # differeing heights in the plot.
-            counts = plot_data(sales_data_frame)
+            counts = group_data(sales_data_frame)
 
             st.header(f'Last {num_sales} Sales by Collection')
             st.bar_chart(counts)
@@ -196,8 +174,8 @@ def main():
             else:
                 top_selling = 3
 
-            st.subheader(f'Top {top_selling} Collections')
-            st.write(counts.iloc[0:top_selling].to_frame('Number of Sales'))
+            st.sidebar.subheader(f'Top {top_selling} Collections')
+            st.sidebar.markdown(counts.iloc[0:top_selling].to_markdown())
 
     # Clean up and exit the program!
     return
