@@ -43,11 +43,11 @@ def query_api(num_sales):
     # reason. Usually reducing the number of sales requested or waiting 
     # a few minutes resolves things.
     if response_data is None:        
-        print(
+        st.error(
             f'Unable to get data. Try lowering the number of sales requested'
             f' or waiting a few minutes.'
         )
-        sys.exit()
+        st.stop()
     
     return response_data
 
@@ -100,11 +100,11 @@ def parse_data(sales_data):
             asset_date_list.append(item["created_date"])
     except:
         # Again, gracefully exit the program if an error is encountered.
-        print(
+        st.error(
             f'Unable to parse the data. Try lowering the number of sales' 
             f' requested or waiting a few minutes.'
         )
-        sys.exit()
+        st.stop()
 
     # Merge lists into a dataframe. Each list is saved as a column in 
     # the data frame.
