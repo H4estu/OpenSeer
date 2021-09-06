@@ -160,11 +160,11 @@ def main():
             # Call the function that will transform the JSON data into a tabular dataframe
             sales_data_frame = parse_data(sales_data_json)
 
-            # Call the function that will plot the sales data grouped by the
-            # name of the collection. This line is what gives the bars their 
-            # differeing heights in the plot.
+            # Call the function that will group the data by Collection.
             counts = group_data(sales_data_frame)
-
+            
+            # Plot the data. altair.Chart is directly invoked for better
+            # control over plot elements.
             st.subheader('Response')
             c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
                 .mark_bar().encode(
