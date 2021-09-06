@@ -166,12 +166,14 @@ def main():
         # Plot the data. altair.Chart is directly invoked for better
         # control over plot elements.
         st.subheader('Response')
-        c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
-            .mark_bar().encode(
-                x='Collection',
-                y='Sales'
-            )
-        )
+        c = (alt.Chart(
+                counts.reset_index(), 
+                title=f'Last {num_sales} Sales by Collection'
+        ).mark_bar().encode(
+            x='Collection',
+            y='Sales',
+            tooltip=['Collection', 'Sales']
+        ))
         st.altair_chart(c, use_container_width=True)
 
         if num_sales < 3:
