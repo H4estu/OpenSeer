@@ -1,5 +1,6 @@
 import requests
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -163,8 +164,13 @@ def main():
             # differeing heights in the plot.
             counts = group_data(sales_data_frame)
 
-            st.header(f'Last {num_sales} Sales by Collection')
-            st.bar_chart(counts)
+            c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
+                .mark_bar().encode(
+                    x='Collection',
+                    y='Sales'
+                )
+            )
+            st.altair_chart(c, use_container_width=True)
 
             if num_sales < 3:
                 top_selling = num_sales
