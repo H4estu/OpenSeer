@@ -188,7 +188,16 @@ def main():
             # differeing heights in the plot.
             counts = plot_data(sales_data_frame)
 
+            st.header(f'Last {num_sales} Sales by Collection')
             st.bar_chart(counts)
+
+            if num_sales < 3:
+                top_selling = num_sales
+            else:
+                top_selling = 3
+
+            st.subheader(f'Top {top_selling} Collections')
+            st.write(counts.iloc[0:top_selling].to_frame('Number of Sales'))
 
     # Clean up and exit the program!
     return
