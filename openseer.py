@@ -148,6 +148,7 @@ def main():
     and routes them to the appropriate functions.
     """
 
+    st.subheader('Data Request')
     with st.form('API Parameters'):
         num_sales = st.number_input('Number of sales', min_value=1, max_value=300)
         submitted = st.form_submit_button('Submit')
@@ -164,6 +165,7 @@ def main():
             # differeing heights in the plot.
             counts = group_data(sales_data_frame)
 
+            st.subheader('Response')
             c = (alt.Chart(counts.reset_index(), title=f'Last {num_sales} Sales by Collection')
                 .mark_bar().encode(
                     x='Collection',
