@@ -1,5 +1,5 @@
 # OpenSeer
-Visualize NFT sales data from Opensea.io
+Visualize NFT sales data from Opensea.io.
 
 [Website](https://share.streamlit.io/h4estu/openseer/main/openseer.py)
 
