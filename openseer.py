@@ -93,9 +93,14 @@ def parse_data(sales_data):
     # are saved to asset_name_list, and the date of the transactions
     # are saved to asset_date_list.
     try:
+        bad_count = 0
         for item in sales_data['asset_events']:
-            asset_name_list.append(item['asset']['collection']['name'])
-            asset_date_list.append(item["created_date"])
+            if item['asset'] is None:
+                print('Bad asset. Skipping...')
+                bad_count += 1
+            else:
+                asset_name_list.append(item['asset']['collection']['name'])
+                asset_date_list.append(item["created_date"])
     except:
         # Again, gracefully exit the program if an error is encountered.
         st.error(
@@ -103,6 +108,7 @@ def parse_data(sales_data):
             f' requested or waiting a few minutes.'
         )
         st.stop()
+    print(f'{bad_count} sales were unable to be parsed.')
 
     # Merge lists into a dataframe. Each list is saved as a column in 
     # the data frame.
@@ -111,7 +117,7 @@ def parse_data(sales_data):
         "NFT_Group_Name": asset_name_list
         })
 
-    return data_frame
+    return data_frame, bad_count
 
 
 def group_data(sales_data):
@@ -158,7 +164,8 @@ def main():
         sales_data_json = query_api(num_sales)
 
         # Call the function that will transform the JSON data into a tabular dataframe
-        sales_data_frame = parse_data(sales_data_json)
+        sales_data_frame, bad_sales = parse_data(sales_data_json)
+        st.write(f'{bad_sales} sales omitted')
 
         # Call the function that will group the data by Collection.
         counts = group_data(sales_data_frame)
@@ -168,7 +175,7 @@ def main():
         st.subheader('Response')
         c = (alt.Chart(
                 counts.reset_index(), 
-                title=f'Last {num_sales} Sales by Collection'
+                title=f'Last {num_sales-bad_sales} Sales by Collection'
         ).mark_bar().encode(
             x='Collection',
             y='Sales',
