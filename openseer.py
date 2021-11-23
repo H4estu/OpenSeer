@@ -30,12 +30,18 @@ def query_api(num_sales):
     # The API endpoint containing the recent NFT sales data.
     url = "https://api.opensea.io/api/v1/events"
 
-    response_data = requests.get(
+    response = requests.get(
         url,
         params = {
             'event_type': 'successful',  # Request only completed sales
             'limit': num_sales
-        }).json()
+        }
+    )
+    if response.status_code not in range(200, 300):
+        st.error('The OpenSea API is not responding. Please try again later.')
+        st.stop()
+    else:
+        response_data = response.json()
 
     # Gracefully exit the program if the API request fails for some
     # reason. Usually reducing the number of sales requested or waiting 
